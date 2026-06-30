@@ -1,13 +1,11 @@
 namespace WorkoutTracker.Entities;
 
-public class SetLog
+public class SetLog : BaseEntity
 {
-    public int Id { get; set; }
     
     public int SetNumber { get; set; }
     public int Reps { get; set; }
     public decimal WeightKg { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // foreign keys
     public int WorkoutSessionId { get; set; }

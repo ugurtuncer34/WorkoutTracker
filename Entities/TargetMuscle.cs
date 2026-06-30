@@ -1,9 +1,9 @@
 namespace WorkoutTracker.Entities;
 
-public class TargetMuscle
+public class TargetMuscle : BaseEntity
 {
-    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string? IconKey { get; set; }
     // Foreign Key
     public int MuscleGroupId { get; set; }
     public MuscleGroup MuscleGroup { get; set; } = null!;
