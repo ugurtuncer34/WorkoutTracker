@@ -18,4 +18,5 @@ public interface ICatalogService
 
     Task<ServiceResponse<List<MuscleGroupResponse>>> GetMuscleGroupsAsync();
     Task<ServiceResponse<List<CatalogItemResponse>>> GetExercisesByTargetMuscleAsync(int targetMuscleId);
+    Task<ServiceResponse<List<ExerciseCatalogResponse>>> GetExercisesByMuscleGroupAsync(int muscleGroupId);
 }

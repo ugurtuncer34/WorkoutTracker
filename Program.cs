@@ -42,4 +42,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using(var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+
+    // apply any pending migrations and seed the database
+    context.Database.Migrate();
+    DbInitializer.Initialize(context);
+}
+
 app.Run();

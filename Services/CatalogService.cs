@@ -61,7 +61,7 @@ public class CatalogService : ICatalogService
 
         if (!string.IsNullOrWhiteSpace(request.Name)) entity.Name = request.Name;
         if (request.IconKey != null) entity.IconKey = request.IconKey == "" ? null : request.IconKey;
-        
+
         await _context.SaveChangesAsync();
         return new ServiceResponse<bool> { Data = true, Message = "Muscle group updated successfully." };
     }
@@ -80,7 +80,7 @@ public class CatalogService : ICatalogService
 
         if (!string.IsNullOrWhiteSpace(request.Name)) entity.Name = request.Name;
         if (request.IconKey != null) entity.IconKey = request.IconKey == "" ? null : request.IconKey;
-        
+
         await _context.SaveChangesAsync();
         return new ServiceResponse<bool> { Data = true, Message = "Target muscle updated successfully." };
     }
@@ -99,7 +99,7 @@ public class CatalogService : ICatalogService
 
         if (!string.IsNullOrWhiteSpace(request.Name)) entity.Name = request.Name;
         if (request.IconKey != null) entity.IconKey = request.IconKey == "" ? null : request.IconKey;
-        
+
         await _context.SaveChangesAsync();
         return new ServiceResponse<bool> { Data = true, Message = "Exercise updated successfully." };
     }
@@ -142,12 +142,12 @@ public class CatalogService : ICatalogService
     {
         var data = await _context.MuscleGroups
             .Include(m => m.TargetMuscles)
-            .Select(m => new MuscleGroupResponse 
+            .Select(m => new MuscleGroupResponse
             {
                 Id = m.Id,
                 Name = m.Name,
                 IconKey = m.IconKey,
-                TargetMuscles = m.TargetMuscles.Select(t => new CatalogItemResponse 
+                TargetMuscles = m.TargetMuscles.Select(t => new CatalogItemResponse
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -163,7 +163,7 @@ public class CatalogService : ICatalogService
     {
         var data = await _context.Exercises
             .Where(e => e.TargetMuscleId == targetMuscleId)
-            .Select(e => new CatalogItemResponse 
+            .Select(e => new CatalogItemResponse
             {
                 Id = e.Id,
                 Name = e.Name,
@@ -174,5 +174,36 @@ public class CatalogService : ICatalogService
         if (!data.Any()) return new ServiceResponse<List<CatalogItemResponse>> { Success = false, IsNotFound = true, Message = "No exercises found." };
 
         return new ServiceResponse<List<CatalogItemResponse>> { Data = data };
+    }
+
+    public async Task<ServiceResponse<List<ExerciseCatalogResponse>>> GetExercisesByMuscleGroupAsync(int muscleGroupId)
+    {
+        var exercises = await _context.Exercises
+            .Include(e => e.TargetMuscle)
+            .Where(e => e.TargetMuscle.MuscleGroupId == muscleGroupId)
+            .Select(e => new ExerciseCatalogResponse
+            {
+                Id = e.Id,
+                Name = e.Name,
+                IconKey = e.IconKey,
+                TargetMuscleName = e.TargetMuscle.Name
+            })
+            .ToListAsync();
+
+        if (!exercises.Any())
+        {
+            return new ServiceResponse<List<ExerciseCatalogResponse>>
+            {
+                Success = false,
+                IsNotFound = true,
+                Message = "No exercises found for the specified muscle group."
+            };
+        }
+
+        return new ServiceResponse<List<ExerciseCatalogResponse>>
+        {
+            Data = exercises,
+            Message = "Exercises retrieved successfully."
+        };
     }
 }

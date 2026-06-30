@@ -128,4 +128,17 @@ public class CatalogController : ControllerBase
 
         return Ok(response.Data);
     }
+
+    [HttpGet("muscle-groups/{id}/exercises")]
+    public async Task<IActionResult> GetExercisesByMuscleGroup(int id)
+    {
+        var response = await _catalogService.GetExercisesByMuscleGroupAsync(id);
+        
+        if (!response.Success) 
+        {
+            return response.IsNotFound ? NotFound(response.Message) : BadRequest(response.Message);
+        }
+
+        return Ok(response.Data);
+    }
 }
