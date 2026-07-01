@@ -9,4 +9,7 @@ services:
     ports:
       - "5065:5065"
     volumes:
-      - ./data:/app/data
+      - workout_data:/app/data
+
+volumes:
+  workout_data:
