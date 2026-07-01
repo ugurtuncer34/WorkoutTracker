@@ -18,4 +18,5 @@ public class ExerciseCatalogResponse
     public string Name { get; set; } = string.Empty;
     public string? IconKey { get; set; }
     public string TargetMuscleName { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
 }

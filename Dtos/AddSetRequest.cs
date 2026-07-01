@@ -8,6 +8,8 @@ public class AddSetRequest
     
     // set details
     public int SetNumber { get; set; }
-    public int Reps { get; set; }
-    public decimal WeightKg { get; set; }
+    public int? Reps { get; set; }
+    public decimal? WeightKg { get; set; }
+    public int? DurationSeconds { get; set; }
+    public string? Notes { get; set; }
 }

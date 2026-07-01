@@ -186,7 +186,8 @@ public class CatalogService : ICatalogService
                 Id = e.Id,
                 Name = e.Name,
                 IconKey = e.IconKey,
-                TargetMuscleName = e.TargetMuscle.Name
+                TargetMuscleName = e.TargetMuscle.Name,
+                Type = e.Type.ToString() // map enum to string
             })
             .ToListAsync();
 
@@ -204,6 +205,30 @@ public class CatalogService : ICatalogService
         {
             Data = exercises,
             Message = "Exercises retrieved successfully."
+        };
+    }
+
+    public async Task<ServiceResponse<ExerciseCatalogResponse>> GetExerciseByIdAsync(int id)
+    {
+        var exercise = await _context.Exercises
+            .Include(e => e.TargetMuscle)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (exercise == null)
+        {
+            return new ServiceResponse<ExerciseCatalogResponse> { Success = false, IsNotFound = true, Message = "Exercise not found." };
+        }
+
+        return new ServiceResponse<ExerciseCatalogResponse>
+        {
+            Data = new ExerciseCatalogResponse
+            {
+                Id = exercise.Id,
+                Name = exercise.Name,
+                IconKey = exercise.IconKey,
+                TargetMuscleName = exercise.TargetMuscle.Name,
+                Type = exercise.Type.ToString()
+            }
         };
     }
 }

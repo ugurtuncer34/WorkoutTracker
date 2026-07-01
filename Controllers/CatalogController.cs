@@ -31,7 +31,7 @@ public class CatalogController : ControllerBase
     {
         var response = await _catalogService.CreateTargetMuscleAsync(request);
         if (!response.Success) return response.IsNotFound ? NotFound(response.Message) : BadRequest(response.Message);
-        
+
         return Ok(response);
     }
 
@@ -130,15 +130,25 @@ public class CatalogController : ControllerBase
     }
 
     [HttpGet("muscle-groups/{id}/exercises")]
+    [Tags("Exercises")]
     public async Task<IActionResult> GetExercisesByMuscleGroup(int id)
     {
         var response = await _catalogService.GetExercisesByMuscleGroupAsync(id);
-        
-        if (!response.Success) 
+
+        if (!response.Success)
         {
             return response.IsNotFound ? NotFound(response.Message) : BadRequest(response.Message);
         }
 
+        return Ok(response.Data);
+    }
+
+    [HttpGet("exercises/{id}")]
+    [Tags("Exercises")]
+    public async Task<IActionResult> GetExercise(int id)
+    {
+        var response = await _catalogService.GetExerciseByIdAsync(id);
+        if (!response.Success) return NotFound(response.Message);
         return Ok(response.Data);
     }
 }

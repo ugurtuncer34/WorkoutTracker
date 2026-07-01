@@ -46,7 +46,9 @@ public class WorkoutService : IWorkoutService
             ExerciseId = request.ExerciseId,
             SetNumber = request.SetNumber,
             Reps = request.Reps,
-            WeightKg = request.WeightKg
+            WeightKg = request.WeightKg,
+            DurationSeconds = request.DurationSeconds,
+            Notes = request.Notes
         };
 
         _context.SetLogs.Add(newSet);
@@ -104,7 +106,9 @@ public class WorkoutService : IWorkoutService
                         Id = sl.Id,
                         SetNumber = sl.SetNumber,
                         Reps = sl.Reps,
-                        WeightKg = sl.WeightKg
+                        WeightKg = sl.WeightKg,
+                        DurationSeconds = sl.DurationSeconds,
+                        Notes = sl.Notes
                     }).ToList()
                 }).ToList()
         }).ToList();
@@ -147,7 +151,9 @@ public class WorkoutService : IWorkoutService
                         Id = sl.Id,
                         SetNumber = sl.SetNumber,
                         Reps = sl.Reps,
-                        WeightKg = sl.WeightKg
+                        WeightKg = sl.WeightKg,
+                        DurationSeconds = sl.DurationSeconds,
+                        Notes = sl.Notes
                     }).ToList()
                 }).ToList()
         };

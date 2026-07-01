@@ -8,7 +8,7 @@ public class WorkoutSessionResponse
     public bool IsCompleted { get; set; }
     
     // Total volume as Weight * Rep
-    public decimal TotalVolumeKg => Exercises.Sum(e => e.Sets.Sum(s => s.Reps * s.WeightKg));
+    public decimal TotalVolumeKg => Exercises.Sum(e => e.Sets.Sum(s => (s.Reps ?? 0) * (s.WeightKg ?? 0m)));
 
     public List<ExerciseLogResponse> Exercises { get; set; } = new();
 }
@@ -28,8 +28,10 @@ public class SetLogResponse
 {
     public int Id { get; set; }
     public int SetNumber { get; set; }
-    public int Reps { get; set; }
-    public decimal WeightKg { get; set; }
+    public int? Reps { get; set; }
+    public decimal? WeightKg { get; set; }
+    public int? DurationSeconds { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class StartSessionResponse
