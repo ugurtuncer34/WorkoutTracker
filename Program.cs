@@ -11,12 +11,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
-
+var corsOrigins = builder.Configuration.GetValue<string>("CorsOrigins") ?? "http://localhost:5173";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.AllowAnyHeader() // WithOrigins("http://localhost:5173")
+        policy.WithOrigins(corsOrigins.Split(','))
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
