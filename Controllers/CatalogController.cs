@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Dtos;
 using WorkoutTracker.Services;
@@ -6,6 +7,7 @@ namespace WorkoutTracker.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CatalogController : ControllerBase
 {
     private readonly ICatalogService _catalogService;
