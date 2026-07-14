@@ -41,15 +41,39 @@ public class CatalogService : ICatalogService
 
     public async Task<ServiceResponse<CatalogItemResponse>> CreateExerciseAsync(CreateExerciseRequest request)
     {
-        var exists = await _context.TargetMuscles.AnyAsync(t => t.Id == request.TargetMuscleId);
-        if (!exists) return new ServiceResponse<CatalogItemResponse> { Success = false, IsNotFound = true, Message = "Target muscle not found." };
+        var exists = await _context.TargetMuscles
+            .AnyAsync(t => t.Id == request.TargetMuscleId);
 
-        var entity = new Exercise { TargetMuscleId = request.TargetMuscleId, Name = request.Name, IconKey = request.IconKey };
+        if (!exists) return new ServiceResponse<CatalogItemResponse>
+        {
+            Success = false,
+            IsNotFound = true,
+            Message = "Target muscle not found."
+        };
+
+        var entity = new Exercise
+        {
+            TargetMuscleId = request.TargetMuscleId,
+            Name = request.Name,
+            IconKey = request.IconKey,
+            Type = request.Type
+        };
+
         _context.Exercises.Add(entity);
         await _context.SaveChangesAsync();
 
-        var data = new CatalogItemResponse { Id = entity.Id, Name = entity.Name, IconKey = entity.IconKey };
-        return new ServiceResponse<CatalogItemResponse> { Data = data, Message = "Exercise created successfully." };
+        var data = new CatalogItemResponse
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            IconKey = entity.IconKey
+        };
+
+        return new ServiceResponse<CatalogItemResponse>
+        {
+            Data = data,
+            Message = "Exercise created successfully."
+        };
     }
 
     // update
@@ -88,20 +112,44 @@ public class CatalogService : ICatalogService
     public async Task<ServiceResponse<bool>> UpdateExerciseAsync(int id, UpdateExerciseRequest request)
     {
         var entity = await _context.Exercises.FindAsync(id);
-        if (entity == null) return new ServiceResponse<bool> { Success = false, IsNotFound = true, Message = "Exercise not found." };
+        if (entity == null) return new ServiceResponse<bool>
+        {
+            Success = false,
+            IsNotFound = true,
+            Message = "Exercise not found."
+        };
 
         if (request.TargetMuscleId.HasValue)
         {
-            var exists = await _context.TargetMuscles.AnyAsync(t => t.Id == request.TargetMuscleId.Value);
-            if (!exists) return new ServiceResponse<bool> { Success = false, Message = "Invalid TargetMuscleId." };
+            var exists = await _context.TargetMuscles
+                .AnyAsync(t => t.Id == request.TargetMuscleId.Value);
+
+            if (!exists)
+                return new ServiceResponse<bool> { Success = false, Message = "Invalid TargetMuscleId." };
+
             entity.TargetMuscleId = request.TargetMuscleId.Value;
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Name)) entity.Name = request.Name;
-        if (request.IconKey != null) entity.IconKey = request.IconKey == "" ? null : request.IconKey;
+        if (!string.IsNullOrWhiteSpace(request.Name))
+        {
+            entity.Name = request.Name;
+        }
+        if (request.IconKey != null)
+        {
+            entity.IconKey = request.IconKey == "" ? null : request.IconKey;
+        }
+        if (request.Type.HasValue)
+        {
+            entity.Type = request.Type.Value;
+        }
 
         await _context.SaveChangesAsync();
-        return new ServiceResponse<bool> { Data = true, Message = "Exercise updated successfully." };
+
+        return new ServiceResponse<bool>
+        {
+            Data = true,
+            Message = "Exercise updated successfully."
+        };
     }
 
     // delete
