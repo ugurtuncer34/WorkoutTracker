@@ -59,6 +59,22 @@ public class WorkoutController : ControllerBase
         return Ok(response.Data);
     }
 
+    [HttpGet("exercises/{exerciseId}/last-performance")]
+    public async Task<IActionResult> GetLastPerformance(
+        int exerciseId,
+        [FromQuery] int? excludeSessionId,
+        CancellationToken cancellationToken)
+    {
+        var response = await _workoutService.GetLastPerformanceAsync(
+            exerciseId,
+            GetUserId(),
+            excludeSessionId,
+            cancellationToken);
+
+        if (!response.Success) return NotFound(response.Message);
+        return Ok(response);
+    }
+
     [HttpDelete("sessions/{sessionId}/cancel")]
     public async Task<IActionResult> CancelSession(int sessionId)
     {

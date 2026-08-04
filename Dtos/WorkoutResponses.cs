@@ -43,3 +43,23 @@ public class AddSetResponse
 {
     public int LogId { get; set; }
 }
+
+public class LastPerformanceResponse
+{
+    public int WorkoutSessionId { get; set; }
+    public DateTime SessionCreatedAt { get; set; }
+    public int ExerciseId { get; set; }
+    public string ExerciseName { get; set; } = string.Empty;
+    public string ExerciseType { get; set; } = string.Empty;
+    public List<LastPerformanceSetResponse> Sets { get; set; } = new();
+}
+
+public class LastPerformanceSetResponse
+{
+    public int Id { get; set; }
+    public int SetNumber { get; set; }
+    public int? Reps { get; set; }
+    public decimal? WeightKg { get; set; }
+    public int? DurationSeconds { get; set; }
+    public string? Notes { get; set; }
+}

@@ -11,5 +11,6 @@ public interface IWorkoutService
     Task<ServiceResponse<bool>> DeleteSessionAsync(int sessionId, int userId);
     Task<ServiceResponse<List<WorkoutSessionResponse>>> GetAllSessionsAsync(int userId);
     Task<ServiceResponse<WorkoutSessionResponse>> GetSessionByIdAsync(int id, int userId);
+    Task<ServiceResponse<LastPerformanceResponse?>> GetLastPerformanceAsync(int exerciseId, int userId, int? excludeSessionId, CancellationToken cancellationToken);
     Task<ServiceResponse<bool>> DeleteSetAsync(int logId, int userId);
 }

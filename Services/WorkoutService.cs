@@ -100,6 +100,63 @@ public class WorkoutService : IWorkoutService
         return new ServiceResponse<WorkoutSessionResponse> { Data = response };
     }
 
+    public async Task<ServiceResponse<LastPerformanceResponse?>> GetLastPerformanceAsync(
+        int exerciseId,
+        int userId,
+        int? excludeSessionId,
+        CancellationToken cancellationToken)
+    {
+        var exercise = await _context.Exercises
+            .AsNoTracking()
+            .Where(e => e.Id == exerciseId)
+            .Select(e => new { e.Id, e.Name, e.Type })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (exercise is null)
+        {
+            return new ServiceResponse<LastPerformanceResponse?>
+            {
+                Success = false,
+                IsNotFound = true,
+                Message = "Exercise not found."
+            };
+        }
+
+        var performance = await _context.WorkoutSessions
+            .AsNoTracking()
+            .Where(session =>
+                session.UserId == userId &&
+                session.IsCompleted &&
+                (!excludeSessionId.HasValue || session.Id != excludeSessionId.Value) &&
+                session.SetLogs.Any(set => set.ExerciseId == exerciseId))
+            .OrderByDescending(session => session.CreatedAt)
+            .ThenByDescending(session => session.Id)
+            .Select(session => new LastPerformanceResponse
+            {
+                WorkoutSessionId = session.Id,
+                SessionCreatedAt = session.CreatedAt,
+                ExerciseId = exercise.Id,
+                ExerciseName = exercise.Name,
+                ExerciseType = exercise.Type.ToString(),
+                Sets = session.SetLogs
+                    .Where(set => set.ExerciseId == exerciseId)
+                    .OrderBy(set => set.SetNumber)
+                    .Select(set => new LastPerformanceSetResponse
+                    {
+                        Id = set.Id,
+                        SetNumber = set.SetNumber,
+                        Reps = set.Reps,
+                        WeightKg = set.WeightKg,
+                        DurationSeconds = set.DurationSeconds,
+                        Notes = set.Notes
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return new ServiceResponse<LastPerformanceResponse?> { Data = performance };
+    }
+
     public async Task<ServiceResponse<bool>> CancelSessionAsync(int sessionId, int userId)
     {
         var session = await _context.WorkoutSessions.FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId);
