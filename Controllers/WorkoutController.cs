@@ -28,6 +28,16 @@ public class WorkoutController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("sessions/from-template")]
+    public async Task<IActionResult> StartSessionFromTemplate(
+        [FromBody] StartSessionFromTemplateRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response = await _workoutService.StartSessionFromTemplateAsync(
+            request, GetUserId(), cancellationToken);
+        return ToActionResult(response);
+    }
+
     [HttpPost("logs")]
     public async Task<IActionResult> AddSet([FromBody] AddSetRequest request)
     {
@@ -57,6 +67,37 @@ public class WorkoutController : ControllerBase
         var response = await _workoutService.GetSessionByIdAsync(id, GetUserId());
         if (!response.Success) return NotFound(response.Message);
         return Ok(response.Data);
+    }
+
+    [HttpGet("sessions/{sessionId}/exercise-plan")]
+    public async Task<IActionResult> GetExercisePlan(int sessionId, CancellationToken cancellationToken)
+    {
+        var response = await _workoutService.GetExercisePlanAsync(
+            sessionId, GetUserId(), cancellationToken);
+        return ToActionResult(response);
+    }
+
+    [HttpPost("sessions/{sessionId}/exercises")]
+    public async Task<IActionResult> AddExercise(
+        int sessionId,
+        [FromBody] AddWorkoutSessionExerciseRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response = await _workoutService.AddExerciseAsync(
+            sessionId, request, GetUserId(), cancellationToken);
+        return ToActionResult(response);
+    }
+
+    [HttpPut("sessions/{sessionId}/exercises/{sessionExerciseId}/status")]
+    public async Task<IActionResult> UpdateExerciseStatus(
+        int sessionId,
+        int sessionExerciseId,
+        [FromBody] UpdateWorkoutSessionExerciseStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response = await _workoutService.UpdateExerciseStatusAsync(
+            sessionId, sessionExerciseId, request, GetUserId(), cancellationToken);
+        return ToActionResult(response);
     }
 
     [HttpGet("exercises/{exerciseId}/last-performance")]
@@ -97,6 +138,16 @@ public class WorkoutController : ControllerBase
     {
         var response = await _workoutService.DeleteSetAsync(id, GetUserId());
         if (!response.Success) return response.IsNotFound ? NotFound(response.Message) : BadRequest(response.Message);
+        return Ok(response);
+    }
+
+    private IActionResult ToActionResult<T>(ServiceResponse<T> response)
+    {
+        if (!response.Success)
+        {
+            return response.IsNotFound ? NotFound(response.Message) : BadRequest(response.Message);
+        }
+
         return Ok(response);
     }
 }

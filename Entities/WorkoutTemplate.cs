@@ -10,4 +10,5 @@ public class WorkoutTemplate : BaseEntity
     public bool IsArchived { get; set; }
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public ICollection<WorkoutTemplateExercise> Exercises { get; set; } = new List<WorkoutTemplateExercise>();
+    public ICollection<WorkoutSession> WorkoutSessions { get; set; } = new List<WorkoutSession>();
 }

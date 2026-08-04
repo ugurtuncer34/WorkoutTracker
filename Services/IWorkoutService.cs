@@ -5,7 +5,11 @@ namespace WorkoutTracker.Services;
 public interface IWorkoutService
 {
     Task<ServiceResponse<StartSessionResponse>> StartSessionAsync(StartSessionRequest request, int userId);
+    Task<ServiceResponse<WorkoutSessionExercisePlanResponse>> StartSessionFromTemplateAsync(StartSessionFromTemplateRequest request, int userId, CancellationToken cancellationToken);
     Task<ServiceResponse<AddSetResponse>> AddSetAsync(AddSetRequest request, int userId);
+    Task<ServiceResponse<WorkoutSessionExercisePlanResponse>> GetExercisePlanAsync(int sessionId, int userId, CancellationToken cancellationToken);
+    Task<ServiceResponse<WorkoutSessionExercisePlanResponse>> AddExerciseAsync(int sessionId, AddWorkoutSessionExerciseRequest request, int userId, CancellationToken cancellationToken);
+    Task<ServiceResponse<WorkoutSessionExerciseResponse>> UpdateExerciseStatusAsync(int sessionId, int sessionExerciseId, UpdateWorkoutSessionExerciseStatusRequest request, int userId, CancellationToken cancellationToken);
     Task<ServiceResponse<bool>> CompleteSessionAsync(int sessionId, int userId);
     Task<ServiceResponse<bool>> CancelSessionAsync(int sessionId, int userId);
     Task<ServiceResponse<bool>> DeleteSessionAsync(int sessionId, int userId);

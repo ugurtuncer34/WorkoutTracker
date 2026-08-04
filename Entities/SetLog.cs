@@ -15,4 +15,6 @@ public class SetLog : BaseEntity
     public WorkoutSession WorkoutSession { get; set; } = null!;
     public int ExerciseId { get; set; }
     public Exercise Exercise { get; set; } = null!;
+    public int? WorkoutSessionExerciseId { get; set; }
+    public WorkoutSessionExercise? WorkoutSessionExercise { get; set; }
 }

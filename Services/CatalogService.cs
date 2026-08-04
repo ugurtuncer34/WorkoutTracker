@@ -162,8 +162,11 @@ public class CatalogService : ICatalogService
         var isUsedByTemplate = await _context.WorkoutTemplateExercises
             .AsNoTracking()
             .AnyAsync(te => te.Exercise.TargetMuscle.MuscleGroupId == id);
-        if (isUsedByTemplate)
-            return new ServiceResponse<bool> { Success = false, Message = "Muscle group cannot be deleted because one or more exercises are used by a workout template." };
+        var isUsedBySessionPlan = await _context.WorkoutSessionExercises
+            .AsNoTracking()
+            .AnyAsync(se => se.Exercise.TargetMuscle.MuscleGroupId == id);
+        if (isUsedByTemplate || isUsedBySessionPlan)
+            return new ServiceResponse<bool> { Success = false, Message = "Muscle group cannot be deleted because one or more exercises are used by a workout template or session plan." };
 
         _context.MuscleGroups.Remove(entity);
         await _context.SaveChangesAsync();
@@ -178,8 +181,11 @@ public class CatalogService : ICatalogService
         var isUsedByTemplate = await _context.WorkoutTemplateExercises
             .AsNoTracking()
             .AnyAsync(te => te.Exercise.TargetMuscleId == id);
-        if (isUsedByTemplate)
-            return new ServiceResponse<bool> { Success = false, Message = "Target muscle cannot be deleted because one or more exercises are used by a workout template." };
+        var isUsedBySessionPlan = await _context.WorkoutSessionExercises
+            .AsNoTracking()
+            .AnyAsync(se => se.Exercise.TargetMuscleId == id);
+        if (isUsedByTemplate || isUsedBySessionPlan)
+            return new ServiceResponse<bool> { Success = false, Message = "Target muscle cannot be deleted because one or more exercises are used by a workout template or session plan." };
 
         _context.TargetMuscles.Remove(entity);
         await _context.SaveChangesAsync();
@@ -194,8 +200,11 @@ public class CatalogService : ICatalogService
         var isUsedByTemplate = await _context.WorkoutTemplateExercises
             .AsNoTracking()
             .AnyAsync(te => te.ExerciseId == id);
-        if (isUsedByTemplate)
-            return new ServiceResponse<bool> { Success = false, Message = "Exercise cannot be deleted because it is used by a workout template." };
+        var isUsedBySessionPlan = await _context.WorkoutSessionExercises
+            .AsNoTracking()
+            .AnyAsync(se => se.ExerciseId == id);
+        if (isUsedByTemplate || isUsedBySessionPlan)
+            return new ServiceResponse<bool> { Success = false, Message = "Exercise cannot be deleted because it is used by a workout template or session plan." };
 
         _context.Exercises.Remove(entity);
         await _context.SaveChangesAsync();

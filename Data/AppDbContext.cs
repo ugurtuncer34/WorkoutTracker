@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<SetLog> SetLogs { get; set; }
     public DbSet<WorkoutTemplate> WorkoutTemplates { get; set; }
     public DbSet<WorkoutTemplateExercise> WorkoutTemplateExercises { get; set; }
+    public DbSet<WorkoutSessionExercise> WorkoutSessionExercises { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,6 +24,25 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<SetLog>()
             .Property(s => s.WeightKg)
             .HasColumnType("decimal(18,2)");
+
+        modelBuilder.Entity<SetLog>(entity =>
+        {
+            entity.HasIndex(s => s.WorkoutSessionExerciseId);
+            entity.HasOne(s => s.WorkoutSessionExercise)
+                .WithMany(e => e.SetLogs)
+                .HasForeignKey(s => s.WorkoutSessionExerciseId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WorkoutSession>(entity =>
+        {
+            entity.Property(s => s.TemplateNameSnapshot).HasMaxLength(100);
+            entity.HasIndex(s => s.WorkoutTemplateId);
+            entity.HasOne(s => s.WorkoutTemplate)
+                .WithMany(t => t.WorkoutSessions)
+                .HasForeignKey(s => s.WorkoutTemplateId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
 
         modelBuilder.Entity<WorkoutTemplate>(entity =>
         {
@@ -48,6 +68,30 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Exercise)
                 .WithMany(e => e.WorkoutTemplateExercises)
+                .HasForeignKey(e => e.ExerciseId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<WorkoutSessionExercise>(entity =>
+        {
+            entity.Property(e => e.SuggestedWeightKg).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.NotesSnapshot).HasMaxLength(500);
+            entity.Property(e => e.ExerciseNameSnapshot).IsRequired();
+            entity.Property(e => e.TargetMuscleNameSnapshot).IsRequired();
+            entity.Property(e => e.MuscleGroupNameSnapshot).IsRequired();
+            entity.HasIndex(e => e.WorkoutSessionId);
+            entity.HasIndex(e => new { e.WorkoutSessionId, e.Position }).IsUnique();
+            entity.HasIndex(e => new { e.WorkoutSessionId, e.Status });
+            entity.HasIndex(e => e.ExerciseId);
+            entity.HasIndex(e => new { e.WorkoutSessionId, e.ExerciseId })
+                .IsUnique()
+                .HasFilter("IsAdHoc = 0");
+            entity.HasOne(e => e.WorkoutSession)
+                .WithMany(s => s.Exercises)
+                .HasForeignKey(e => e.WorkoutSessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Exercise)
+                .WithMany(e => e.WorkoutSessionExercises)
                 .HasForeignKey(e => e.ExerciseId)
                 .OnDelete(DeleteBehavior.Restrict);
         });

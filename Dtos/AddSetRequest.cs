@@ -5,6 +5,7 @@ public class AddSetRequest
     // which session & exercise
     public int WorkoutSessionId { get; set; }
     public int ExerciseId { get; set; }
+    public int? WorkoutSessionExerciseId { get; set; }
     
     // set details
     public int SetNumber { get; set; }
