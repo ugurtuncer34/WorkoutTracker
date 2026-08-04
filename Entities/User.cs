@@ -7,4 +7,5 @@ public class User : BaseEntity
     
     // One to Many
     public ICollection<WorkoutSession> WorkoutSessions { get; set; } = new List<WorkoutSession>();
+    public ICollection<WorkoutTemplate> WorkoutTemplates { get; set; } = new List<WorkoutTemplate>();
 }

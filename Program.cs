@@ -17,6 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IWorkoutTemplateService, WorkoutTemplateService>();
 
 // CORS
 var corsOrigins = builder.Configuration.GetValue<string>("CorsOrigins") ?? "http://localhost:5173";

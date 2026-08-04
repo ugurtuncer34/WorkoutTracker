@@ -8,4 +8,5 @@ public class Exercise : BaseEntity
     public int TargetMuscleId { get; set; }
     public TargetMuscle TargetMuscle { get; set; } = null!;
     public ICollection<SetLog> SetLogs { get; set; } = new List<SetLog>();
+    public ICollection<WorkoutTemplateExercise> WorkoutTemplateExercises { get; set; } = new List<WorkoutTemplateExercise>();
 }
